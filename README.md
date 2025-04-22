@@ -1,8 +1,5 @@
 # GPT-API-Challenge
 
-### this is a test by Alan to check if it merges correctly after a pull request
-
-
 ## Client aka React + Vite Front-End Development Server
 
 1. Navigate to client directory
