@@ -1,0 +1,2 @@
+# ignore all local env files in commits to prevent credential leakage
+**/.env

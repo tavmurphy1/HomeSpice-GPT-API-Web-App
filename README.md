@@ -14,3 +14,9 @@
 2. "python main.py" in console
 
 3. Enter "http://127.0.0.1:8080" in browser
+
+## Environment Variables
+In order to run the server you need to provide your own `.env`:
+
+1. Copy `server/.env.example` to `server/.env`  
+2. Fill in the `MONGODB_CONNECT_STRING` with your own MongoDB cluster URI  
