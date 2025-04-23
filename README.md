@@ -1,5 +1,12 @@
 # GPT-API-Challenge
 
+## Prerequisites
+
+- Docker Desktop** (includes `docker compose`)  
+- Node.js (>=14) & npm
+- Python 3.8+ & pip
+
+
 ## Client aka React + Vite Front-End Development Server
 
 1. Navigate to client directory
@@ -8,12 +15,18 @@
 
 3. Enter "http://localhost:5173/" in browser
 
-## ## Server aka Flask + PyMongo Back-End Development Server
-1. Navigate to server directory
+## ## Server aka FastAPI + Motor Back-End Development Server
+1. Install Dependencies
+    "cd server"
+    "python3 -m pip install --upgrade pip"
+    "python3 -m pip install --user -r requirements.txt"
 
-2. "python main.py" in console
+2. Start local MongoDB via Docker
+    "docker compose up -d mongo"
 
-3. Enter "http://127.0.0.1:8080" in browser
+3. Run API server
+    "cd server"
+    "python3 -m uvicorn main:app --reload --host 127.0.0.1 --port 8080"
 
 ## Environment Variables
 In order to run the server you need to provide your own `.env`:
