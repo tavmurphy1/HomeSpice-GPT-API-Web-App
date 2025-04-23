@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './LoginPage.css';
-
+import '../styles/LoginPage.css';
 // Backend URL for API requests set in .env file
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -25,30 +24,28 @@ function LoginPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     })
-      .then(res => {
-        if (!res.ok) throw new Error(`Server returned ${res.status}`);
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => {
-        if (data.message) {
-          setMessage(data.message);
+        if (data.success) {
           navigate('/recipes');
-        } else if (data.error) {
-          setMessage(data.error);
         } else {
-          setMessage('Unexpected response from server.');
+          setMessage(data.message || 'Login failed.');
         }
       })
       .catch(err => {
         console.error('Error logging in:', err);
-        setMessage('An error occurred while logging in.');
+        setMessage('An error occurred.');
       });
   }
 
-  // Handles the click event for the "Get Started" button
+  
   // Navigates to the create account page
   function goToCreateAccount() {
     navigate('/create-account');
+  }
+
+  function goToAboutPage() {
+    navigate('/about');
   }
 
   return (
@@ -94,6 +91,10 @@ function LoginPage() {
 
         <button className="signup-button" onClick={goToCreateAccount}>
           Get Started — it's Free!
+        </button>
+
+        <button className="about-button" onClick={goToAboutPage}>
+          About Me
         </button>
 
         {message && <p className="login-message">{message}</p>}

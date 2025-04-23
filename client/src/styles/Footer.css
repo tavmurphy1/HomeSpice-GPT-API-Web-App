@@ -1,0 +1,12 @@
+.footer {
+    width: 100%;
+    padding: 6px;
+    text-align: center;
+    background-color: var(--bg-card); /* Use your theme's background color */
+    color: var(--text-main); /* Use your theme's text color */
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
