@@ -31,7 +31,7 @@ async def get_db():
 app = FastAPI(title="HomeSpice API")
 
 
-# To your React dev server to call this API
+# To allow React dev server to call this API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
