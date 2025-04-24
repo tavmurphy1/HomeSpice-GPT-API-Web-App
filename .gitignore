@@ -1,0 +1,5 @@
+# ignore all local env files in commits to prevent credential leakage
+.env
+
+# do not ignore example env templates
+!.env.example

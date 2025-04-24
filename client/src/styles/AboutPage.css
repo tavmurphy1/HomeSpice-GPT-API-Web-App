@@ -1,0 +1,84 @@
+/* container for the whole page */
+.about-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: var(--font-body);
+  color: #333;
+  line-height: 1.6;
+}
+
+/* common section styling */
+.about-section {
+  margin-bottom: 3rem;
+}
+.about-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+
+/* Mission text */
+.mission p {
+  max-width: 800px;
+}
+
+/* Projects list */
+.projects ul {
+  list-style: disc inside;
+}
+.projects li {
+  margin-bottom: 0.5rem;
+}
+
+/* Authors grid */
+.author-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+.author-card {
+  flex: 1 1 220px;
+  text-align: center;
+}
+
+/* placeholder for author images */
+.author-image {
+  width: 150px;
+  height: 150px;
+  background-color: #000;
+  margin: 0 auto 1rem;
+  border-radius: 8px;
+}
+.author-card h3 {
+  margin: 0.5rem 0 0.25rem;
+}
+.author-card p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.home-button-container {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.home-button-top-right {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: var(--accent); /* Static background color */
+  color: #fff;
+  transition: none; /* Remove hover transition */
+}
+
+
+.home-button-top-right:hover {
+  background: var(--accent); /* Keep the same background color */
+  transform: none; /* No movement on hover */
+}

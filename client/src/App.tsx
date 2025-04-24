@@ -4,6 +4,8 @@ import CreateAccountPage from './pages/CreateAccountPage';
 import RecipesPage from './pages/RecipesPage';
 import RecipeIndividualPage from './pages/RecipeIndividualPage';
 import AboutPage from './pages/AboutPage';
+import PantryPage from './pages/PantryPage'; 
+import Footer from './pages/Footer'; 
 
 function App() {
   return (
@@ -15,7 +17,10 @@ function App() {
         <Route path="/recipes" element={<RecipesPage />} />
         <Route path="/recipe/:recipeId" element={<RecipeIndividualPage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/pantry" element={<PantryPage />} /> 
+        <Route path="/recipes" element={<RecipesPage />} />
       </Routes>
+      <Footer/>
     </BrowserRouter>
   );
 }
