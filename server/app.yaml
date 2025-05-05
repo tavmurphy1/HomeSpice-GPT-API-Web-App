@@ -1,2 +1,6 @@
 runtime: python311
 entrypoint: uvicorn server.main:app --host 0.0.0.0 --port $PORT
+
+env_variables:
+  MONGODB_CONNECT_STRING: "mongodb+srv://murphtav:superman1@cluster0.0pptut9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  MONGO_DB_NAME: "homespice"

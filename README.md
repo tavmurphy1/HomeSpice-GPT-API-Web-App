@@ -32,4 +32,5 @@
 In order to run the server you need to provide your own `.env`:
 
 1. Copy `server/.env.example` to `server/.env`  
-2. Fill in the `MONGODB_CONNECT_STRING` with your own MongoDB cluster URI  
+2. Fill in the `MONGODB_CONNECT_STRING` with your own MongoDB cluster URI
+3. Add MONGO_DB_NAME=homespice to 'server/.env'

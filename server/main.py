@@ -9,29 +9,25 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
-
+from routes import ingredients
 
 load_dotenv()
+
 MONGO_URI = os.getenv("MONGODB_CONNECT_STRING")
+DB_NAME = os.getenv("MONGO_DB_NAME")
+
 if not MONGO_URI:
     raise RuntimeError("Missing MONGODB_CONNECT_STRING")
+if not DB_NAME:
+    raise RuntimeError("Missing MONGO_DB_NAME")
 
-# Async client & DB handle
+# Set up MongoDB client
 client = AsyncIOMotorClient(MONGO_URI)
-db = client.get_default_database()
-
-
-async def get_db():
-    try:
-        await db.command("ping")
-        return db
-    except Exception:
-        raise HTTPException(503, "Database unavailable")
+db = client[DB_NAME]
 
 app = FastAPI(title="HomeSpice API")
 
-
-# To allow React dev server to call this API
+# CORS config
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -40,11 +36,27 @@ app.add_middleware(
 )
 
 
+# Health check dependency
+async def get_db():
+    try:
+        await db.command("ping")
+        return db
+    except Exception:
+        raise HTTPException(status_code=503, detail="Database unavailable")
+
+# Root endpoint
 @app.get("/", tags=["root"])
 async def read_root():
     return {"message": "FastAPI + Motor server is running!"}
 
-
+# Health check endpoint
 @app.get("/health", tags=["health"])
 async def health(db=Depends(get_db)):
     return {"status": "ok"}
+
+# Import ingredient routes
+app.include_router(
+    ingredients.router,
+    prefix="/ingredients",
+    tags=["ingredients"]
+)
