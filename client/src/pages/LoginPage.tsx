@@ -19,7 +19,7 @@ function LoginPage() {
   // If the server returns a message, display it
   // If the server returns an unexpected response, display a generic error message 
   function handleLogin() {
-    fetch(`${API_BASE}/login`, {
+    fetch(`${API_BASE}/user/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
