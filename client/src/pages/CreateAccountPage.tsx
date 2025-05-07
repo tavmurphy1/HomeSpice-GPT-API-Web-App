@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CreateAccountPage.css';
 
-const API_BASE = import.meta.env.VITE_API_URL;
+
+const API_BASE = 'http://127.0.0.1:8080';
+console.log('API_BASE is:', API_BASE);
 
 function CreateAccountPage() {
   const [email, setEmail] = useState('');
@@ -17,23 +19,23 @@ function CreateAccountPage() {
       return;
     }
 
-    fetch(`${API_BASE}/create-account`, {
+    fetch(`${API_BASE}/user/create-account`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     })
-      .then((res) => {
-        if (!res.ok) throw new Error(`Server returned ${res.status}`);
-        return res.json();
+      .then(async (res) => {
+        console.log('Create Account response status:', res.status);
+        const text = await res.text();
+        console.log('Create Account raw body:', text);
+        if (!res.ok) throw new Error(`Server returned ${res.status}: ${text}`);
+        return JSON.parse(text);
       })
       .then((data) => {
-        if (data.message) {
-          setMessage(data.message);
+        if (data.id) {
           navigate('/login');
-        } else if (data.error) {
-          setMessage(data.error);
         } else {
-          setMessage('Unexpected response from server.');
+          setMessage('Failed to create account.');
         }
       })
       .catch((err) => {
@@ -42,14 +44,12 @@ function CreateAccountPage() {
       });
   }
 
-  // Navigate to the home (login) page
   function goToHome() {
     navigate('/login');
   }
 
   return (
     <div className="create-account-container">
-      {/* Top-right home button */}
       <div className="home-button-container">
         <button className="home-button-top-right" onClick={goToHome}>
           Home

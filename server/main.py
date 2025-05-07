@@ -11,6 +11,10 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
 from routes import ingredients
 
+from routes.authUser import router as user_router
+from routes.userList import router as users_router
+
+
 load_dotenv()
 
 MONGO_URI = os.getenv("MONGODB_CONNECT_STRING")
@@ -59,4 +63,17 @@ app.include_router(
     ingredients.router,
     prefix="/ingredients",
     tags=["ingredients"]
+)
+
+# import user routes
+app.include_router(
+    user_router,
+    prefix="/user",
+    tags=["user"]
+)
+# needed to find users 
+app.include_router(
+    users_router,
+    prefix="/users",
+    tags=["users"]
 )
