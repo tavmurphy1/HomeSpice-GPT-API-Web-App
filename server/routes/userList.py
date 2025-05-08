@@ -2,10 +2,12 @@
 FastAPI router to list all registered users
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from pydantic import BaseModel, EmailStr, Field
 from bson import ObjectId
+from motor.motor_asyncio import AsyncIOMotorDatabase
+from db import get_db
 
 # go to 
 # http://127.0.0.1:8080/users/ 
@@ -20,10 +22,7 @@ class UserOut(BaseModel):
 router = APIRouter(tags=["users"])
 
 @router.get("/", response_model=List[UserOut])
-async def list_users():
-    
-    from main import get_db
-    db = await get_db()
+async def list_users(db: AsyncIOMotorDatabase = Depends(get_db)):
 
     try:
         docs = await db.users.find().to_list(length=None)

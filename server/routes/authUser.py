@@ -23,7 +23,7 @@ def format_user(doc) -> dict:
 @router.post("/create-account", response_model=UserInDB, status_code=201)
 async def create_account(user: UserCreate):
     
-    from main import get_db
+    from db import get_db
 
     db: AsyncIOMotorDatabase = await get_db()
     if await db.users.find_one({"email": user.email}):
