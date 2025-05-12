@@ -3,6 +3,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from bson import ObjectId
+from db import get_db
 
 router = APIRouter(tags=["user"])
 
@@ -21,22 +22,18 @@ def format_user(doc) -> dict:
 
 # our main logic for creating a user and authenticate whether we already have it registered
 @router.post("/create-account", response_model=UserInDB, status_code=201)
-async def create_account(user: UserCreate):
-    
-    from main import get_db
+async def create_account(user: UserCreate, db: AsyncIOMotorDatabase = Depends(get_db)):
 
-    db: AsyncIOMotorDatabase = await get_db()
     if await db.users.find_one({"email": user.email}):
         raise HTTPException(400, "Email already registered")
-    result = await db.users.insert_one(user.dict())
+    result = await db.users.insert_one(user.model_dump())
     doc = await db.users.find_one({"_id": result.inserted_id})
     return format_user(doc)
 
-@router.post("/login")
-async def login(user: UserCreate):
-    from main import get_db
 
-    db: AsyncIOMotorDatabase = await get_db()
+@router.post("/login")
+async def login(user: UserCreate, db: AsyncIOMotorDatabase = Depends(get_db)):
+
     doc = await db.users.find_one({"email": user.email})
     if not doc or doc["password"] != user.password:
         raise HTTPException(status_code=401, detail="Invalid email or password")

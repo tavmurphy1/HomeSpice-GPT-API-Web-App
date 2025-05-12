@@ -3,3 +3,8 @@
 
 # do not ignore example env templates
 !.env.example
+
+# Python caches
+__pycache__/
+*.py[cod]__pycache__/
+*.py[cod]
