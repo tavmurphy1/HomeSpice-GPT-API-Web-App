@@ -8,7 +8,7 @@ from bson import ObjectId
 
 from db import get_db
 
-# Firebase Admin SDK import 
+# Firebase Admin SDK import
 import firebase_admin.auth as admin_auth
 
 router = APIRouter(tags=["user"])

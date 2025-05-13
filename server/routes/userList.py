@@ -18,9 +18,10 @@ from db import get_db
 class UserOut(BaseModel):
     id: str = Field(alias="_id")
     email: EmailStr
-    
+
 
 router = APIRouter(tags=["users"])
+
 
 @router.get("/", response_model=List[UserOut])
 async def list_users(db: AsyncIOMotorDatabase = Depends(get_db)):

@@ -5,7 +5,9 @@ import RecipesPage from './pages/RecipesPage';
 import RecipeIndividualPage from './pages/RecipeIndividualPage';
 import AboutPage from './pages/AboutPage';
 import PantryPage from './pages/PantryPage'; 
-import Footer from './pages/Footer'; 
+import Footer from './pages/Footer';
+import Layout from './components/Layout';
+import ProtectedRoute from './components/protectedRoute';
 
 function App() {
   return (
@@ -14,11 +16,17 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/create-account" element={<CreateAccountPage />} />
-        <Route path="/recipes" element={<RecipesPage />} />
-        <Route path="/recipe/:recipeId" element={<RecipeIndividualPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/pantry" element={<PantryPage />} /> 
-        <Route path="/recipes" element={<RecipesPage />} />
+
+        {/* Protected Items - Required auth - Include Navbar */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<Layout />}>
+            <Route path="/recipes" element={<RecipesPage />} />
+            <Route path="/recipe/:recipeId" element={<RecipeIndividualPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/pantry" element={<PantryPage />} /> 
+            <Route path="/recipes" element={<RecipesPage />} />
+        </Route>
+        </Route>
       </Routes>
       <Footer/>
     </BrowserRouter>

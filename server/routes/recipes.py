@@ -108,16 +108,15 @@ async def generate_recipe(
     #     recipe_data = json.loads(resp.choices[0].message.content)
     # except JSON errors:
     #     raise HTTPException(500, "GPT response was not valid JSON")
-    
+
     # Placeholder: return an empty recipe structure
     return {
-        "title": "", 
-        "description": "", 
-        "ingredients": req.ingredients, 
-        "steps": [], 
-        "prep_time": 0, 
-        "cook_time": 0, 
-        "servings": 1, 
+        "title": "",
+        "description": "",
+        "ingredients": req.ingredients,
+        "steps": [],
+        "prep_time": 0,
+        "cook_time": 0,
+        "servings": 1,
         "image_url": None
     }
-
