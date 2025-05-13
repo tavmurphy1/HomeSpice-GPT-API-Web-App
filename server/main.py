@@ -1,18 +1,18 @@
-"""
-FastAPI entrypoint for HomeSpice:
- - Async MongoDB via Motor
- - Simple health & root endpoints
-"""
+
+import firebase_init           
+from firebase_admin import auth as admin_auth
 
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from routes import ingredients
+from fastapi.openapi.utils import get_openapi
+
 from db import get_db
 
-from routes.authUser import router as user_router
-from routes.userList import router as users_router
-from routes.recipes import router as recipes_router
-
+# Routers
+from routes.ingredients import router as ingredients_router
+from routes.authUser     import router as auth_router
+from routes.userList     import router as users_router
+from routes.recipes      import router as recipes_router
 
 app = FastAPI(title="HomeSpice API")
 
@@ -29,34 +29,59 @@ app.add_middleware(
 async def read_root():
     return {"message": "FastAPI + Motor server is running!"}
 
-# Health check endpoint
+# Health endpoint
 @app.get("/health", tags=["health"])
 async def health(db=Depends(get_db)):
     return {"status": "ok"}
 
-# Import ingredient routes
+# Mount routers
 app.include_router(
-    ingredients.router,
+    ingredients_router,
     prefix="/ingredients",
     tags=["ingredients"]
 )
 
-# import user routes
 app.include_router(
-    user_router,
+    auth_router,   # handles /user/create-account, /user/login, /user/profile
     prefix="/user",
     tags=["user"]
 )
-# needed to find users 
+
 app.include_router(
     users_router,
     prefix="/users",
     tags=["users"]
 )
 
-# import recipes routes
 app.include_router(
     recipes_router,
     prefix="/recipes",
     tags=["recipes"]
 )
+#Custon OPENAPI function created to bypass FastAPI schema generation
+# FastAPI has issues with Firebase authentication backend Token verification 
+# This function authenticates the JWT-bearer authentication
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    # Generate base schema
+    schema = get_openapi(
+        title=app.title,
+        version="0.1.0",
+        routes=app.routes,
+    )
+    # Define security scheme
+    schema["components"]["securitySchemes"] = {
+        "bearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+        }
+    }
+    
+    schema["security"] = [{"bearerAuth": []}]
+    app.openapi_schema = schema
+    return app.openapi_schema
+
+# Tell FastAPI to use our custom schema function called custon_openapi
+app.openapi = custom_openapi

@@ -1,47 +1,56 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth }                          from '../firebaseConfig';
 import '../styles/CreateAccountPage.css';
 
-
-const API_BASE = 'http://127.0.0.1:8080';
-console.log('API_BASE is:', API_BASE);
+const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8080';
 
 function CreateAccountPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail]                   = useState('');
+  const [password, setPassword]             = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [message, setMessage]               = useState('');
   const navigate = useNavigate();
 
-  function handleCreateAccount() {
+  async function handleCreateAccount() {
     if (password !== confirmPassword) {
       setMessage('Passwords do not match.');
       return;
     }
 
-    fetch(`${API_BASE}/user/create-account`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    })
-      .then(async (res) => {
-        console.log('Create Account response status:', res.status);
-        const text = await res.text();
-        console.log('Create Account raw body:', text);
-        if (!res.ok) throw new Error(`Server returned ${res.status}: ${text}`);
-        return JSON.parse(text);
-      })
-      .then((data) => {
-        if (data.id) {
-          navigate('/login');
-        } else {
-          setMessage('Failed to create account.');
-        }
-      })
-      .catch((err) => {
-        console.error('Error creating account:', err);
-        setMessage('An error occurred while creating the account.');
+    try {
+      //creates the user with email and pass
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      console.log('Signed up user:', user.uid);
+
+      const token = await user.getIdToken();
+
+      // fetch and stringify the user, and user id
+      const res = await fetch(`${API_BASE}/user/profile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ uid: user.uid, email: user.email })
       });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error('Profile save failed:', res.status, errText);
+        setMessage('Account created, but failed to save profile.');
+      } else {
+        console.log('Profile saved successfully');
+      }
+
+      // NAVIGATE TO LOGIN WHEN DONE can change later in the future to something else
+      navigate('/login');
+
+    } catch (err: any) {
+      console.error('Signup error:', err);
+      setMessage(err.message || 'An error occurred during signup.');
+    }
   }
 
   function goToHome() {
@@ -68,7 +77,7 @@ function CreateAccountPage() {
             placeholder="Email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
           />
         </div>
 
@@ -78,7 +87,7 @@ function CreateAccountPage() {
             placeholder="Password"
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
           />
         </div>
 
@@ -88,11 +97,14 @@ function CreateAccountPage() {
             placeholder="Confirm Password"
             type="password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={e => setConfirmPassword(e.target.value)}
           />
         </div>
 
-        <button className="create-account-button" onClick={handleCreateAccount}>
+        <button
+          className="create-account-button"
+          onClick={handleCreateAccount}
+        >
           Create Account
         </button>
 
