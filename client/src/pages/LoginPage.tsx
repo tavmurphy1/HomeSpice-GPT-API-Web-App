@@ -1,49 +1,53 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';  
+import { auth } from '../firebaseConfig';                   
 import '../styles/LoginPage.css';
-// Backend URL for API requests set in .env file
-const API_BASE = import.meta.env.VITE_API_URL;
 
-// This component allows users to log in with their email and password
-// and navigate to the recipes page upon successful login.
 function LoginPage() {
+  // Controlled inputs for the user’s email and password
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
+  // message is used to surface errors or feedback to the user
   const [message, setMessage]   = useState('');
   const navigate = useNavigate();
 
-  // Handles login button click event
-  // Sends a POST request to the backend API with the user's email and password
-  // If the login is successful, navigate to the recipes page
-  // If there's an error, display the error message
-  // If the server returns a message, display it
-  // If the server returns an unexpected response, display a generic error message 
+  /** 
+   * handleLogin:
+   * 1. Attempt to sign in with Firebase Auth
+   * 2. On success, get the ID token for future API calls
+   * 3. Navigate to /recipes (or wherever your app goes post-login)
+   * 4. On failure, display the error message from Firebase
+   */
   function handleLogin() {
-    fetch(`${API_BASE}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          navigate('/recipes');
-        } else {
-          setMessage(data.message || 'Login failed.');
-        }
+    // Try Firebase email/password sign-in
+    signInWithEmailAndPassword(auth, email, password)
+      .then(async ({ user }) => {
+        // You now have a signed-in user
+        console.log('Logged in user:', user.uid);
+
+        // Grab the Firebase ID token (JWT) for server-side verification if needed
+        const idToken = await user.getIdToken();
+        console.log('ID Token:', idToken);
+        // TODO: store this token (e.g. in localStorage) or attach it to future fetch calls
+
+        // Redirect to your recipes page
+        navigate('/recipes');
       })
       .catch(err => {
-        console.error('Error logging in:', err);
-        setMessage('An error occurred.');
+        // Firebase returns a descriptive error message
+        console.error('Firebase login error:', err);
+        // Show a friendly message to the user
+        setMessage(err.message || 'Login failed. Please try again.');
       });
   }
 
-  
-  // Navigates to the create account page
+  // Navigate to the signup page
   function goToCreateAccount() {
     navigate('/create-account');
   }
 
+  // Navigate to your About page
   function goToAboutPage() {
     navigate('/about');
   }
@@ -63,6 +67,7 @@ function LoginPage() {
           Make every meal unforgettable.
         </p>
 
+        {/* Email input */}
         <div className="input-container">
           <input
             className="login-input"
@@ -73,6 +78,7 @@ function LoginPage() {
           />
         </div>
 
+        {/* Password input */}
         <div className="input-container">
           <input
             className="login-input"
@@ -83,20 +89,24 @@ function LoginPage() {
           />
         </div>
 
+        {/* Login button triggers Firebase sign-in */}
         <button className="login-button" onClick={handleLogin}>
           Login
         </button>
 
         <p className="or-text">Or</p>
 
+        {/* Navigate to the Create Account (sign-up) page */}
         <button className="signup-button" onClick={goToCreateAccount}>
           Get Started — it's Free!
         </button>
 
+        {/* Navigate to your About page */}
         <button className="about-button" onClick={goToAboutPage}>
           About Me
         </button>
 
+        {/* Show any error or status message here */}
         {message && <p className="login-message">{message}</p>}
       </div>
     </div>
