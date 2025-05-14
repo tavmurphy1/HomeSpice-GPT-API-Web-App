@@ -1,24 +1,30 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AboutPage.css';
+import { auth } from '../firebaseConfig';
 
 const AboutPage: React.FC = () => {
   const navigate = useNavigate();
   const goToHome = () => navigate('/login');
 
+  // To check if the user is logged in
+  const user = auth.currentUser;
+
   return (
     <div className="about-container" style={{ position: 'relative' }}>
-      {/* Home button container to return back to login */}
-      <div className="home-button-container">
-        <button
-          className="home-button-top-right"
-          onClick={goToHome}
-        >
-          Home
-        </button>
-      </div>
+      {/* Show Home button only if not logged in */}
+      {!user && (
+        <div className="home-button-container">
+          <button className ="home-button" onClick={goToHome}>
+            Home
+          </button>
+        </div>
+      )}
 
-      
+      {/* Hero section
+          Includes title and description of the app
+      */}
+
       <section className="hero-section">
         <h1>About HomeSlice</h1>
         <p>

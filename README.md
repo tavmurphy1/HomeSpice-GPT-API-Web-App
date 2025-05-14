@@ -25,7 +25,6 @@
     "docker compose up -d mongo"
 
 3. Run API server
-    "cd server"
     "python3 -m uvicorn main:app --reload --host 127.0.0.1 --port 8080"
 
 ## Environment Variables

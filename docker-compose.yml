@@ -1,7 +1,6 @@
 # docker-compose.yml
 # local instance of mongoDB for development and testing
 
-version: "3.8"
 services:
   mongo:
     image: mongo:6

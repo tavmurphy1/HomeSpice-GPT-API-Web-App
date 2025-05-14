@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap');
+
+:root {
+  --bg-page: #fdf8f0;
+  --bg-card: #ffffff;
+  --text-main: #333333;
+  --accent: #b94e48;
+  --muted: #7a7a7a;
+  --shadow: rgba(0, 0, 0, 0.1);
+
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Montserrat', sans-serif;
+}
+
+.navbar {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  background-color: var(--bg-card);
+  box-shadow: 0 4px 16px var(--shadow);
+  border-radius: 10px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-body);
+  border: 1px solid #e0e0e0;
+}
+
+.navbar a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.navbar a:hover {
+  color: var(--text-main);
+}
+
+.navbar a.active {
+  display: none;
+}
