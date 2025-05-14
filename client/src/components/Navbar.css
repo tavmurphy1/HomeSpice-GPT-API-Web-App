@@ -43,3 +43,19 @@
 .navbar a.active {
   display: none;
 }
+
+.navbar button.logout-button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.navbar button.logout-button:hover {
+  color: var(--text-main);
+}

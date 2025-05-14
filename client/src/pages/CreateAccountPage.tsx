@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth }                          from '../firebaseConfig';
@@ -22,9 +22,10 @@ function CreateAccountPage() {
     try {
       //creates the user with email and pass
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
-      console.log('Signed up user:', user.uid);
+      console.log('[Create Account] Signed up user:', user.uid);
 
       const token = await user.getIdToken();
+      console.log('[CreateAccount] Token fetched.');
 
       // fetch and stringify the user, and user id
       const res = await fetch(`${API_BASE}/user/profile`, {
@@ -38,17 +39,17 @@ function CreateAccountPage() {
 
       if (!res.ok) {
         const errText = await res.text();
-        console.error('Profile save failed:', res.status, errText);
+        console.error('[Create Account] Profile save failed:', res.status, errText);
         setMessage('Account created, but failed to save profile.');
       } else {
-        console.log('Profile saved successfully');
+        console.log('[Create Account] Profile saved successfully');
       }
 
-      // NAVIGATE TO LOGIN WHEN DONE can change later in the future to something else
-      navigate('/login');
+      // NAVIGATE TO PANTRY PAGE after account creation, user is logged in
+      navigate('/pantry');
 
     } catch (err: any) {
-      console.error('Signup error:', err);
+      console.error('[Create Account] Signup error:', err);
       setMessage(err.message || 'An error occurred during signup.');
     }
   }
@@ -104,6 +105,7 @@ function CreateAccountPage() {
         <button
           className="create-account-button"
           onClick={handleCreateAccount}
+          disabled={!email || !password || !confirmPassword}
         >
           Create Account
         </button>

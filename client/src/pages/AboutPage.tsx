@@ -1,15 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AboutPage.css';
-import { auth } from '../firebaseConfig';
+import { useAuth } from '../context/AuthContext';
 
 const AboutPage: React.FC = () => {
   const navigate = useNavigate();
   const goToHome = () => navigate('/login');
 
   // To check if the user is logged in
-  const user = auth.currentUser;
-
+  const { user } = useAuth();
   return (
     <div className="about-container" style={{ position: 'relative' }}>
       {/* Show Home button only if not logged in */}
