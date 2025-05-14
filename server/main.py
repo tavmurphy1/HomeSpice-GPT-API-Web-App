@@ -58,9 +58,11 @@ app.include_router(
     prefix="/recipes",
     tags=["recipes"]
 )
-#Custon OPENAPI function created to bypass FastAPI schema generation
+# Custon OPENAPI function created to bypass FastAPI schema generation
 # FastAPI has issues with Firebase authentication backend Token verification 
 # This function authenticates the JWT-bearer authentication
+# Custom openAPI skeleton code taken from documentation and used for our project
+# Citation Source: https://fastapi.tiangolo.com/how-to/extending-openapi/#normal-fastapi
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
