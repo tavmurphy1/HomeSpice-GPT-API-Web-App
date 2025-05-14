@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';  
 import { auth } from '../firebaseConfig';                   
@@ -19,29 +19,29 @@ function LoginPage() {
    * 3. Navigate to /recipes (or wherever your app goes post-login)
    * 4. On failure, display the error message from Firebase
    */
-  function handleLogin() {
+  async function handleLogin() {
     // Try Firebase email/password sign-in
-    signInWithEmailAndPassword(auth, email, password)
-      .then(async ({ user }) => {
-        // You now have a signed-in user
-        console.log('Logged in user:', user.uid);
+    try {
+    // Try firebase sign-in
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      console.log('[LoginPage] Logged in user:', user.uid);
 
+        // NOTE: Token operations now handled by AuthContext.tsx
         // Grab the Firebase ID token (JWT) for server-side verification if needed
-        const idToken = await user.getIdToken();
-        console.log('ID Token:', idToken);
+        // const idToken = await user.getIdToken();
+        // console.log('ID Token:', idToken);
         // TODO: store this token (e.g. in localStorage) or attach it to future fetch calls
 
-        // Redirect to your recipes page
-        navigate('/recipes');
-      })
-      .catch(err => {
+      // Redirect to your pantry page
+      navigate('/pantry');
+
+      } catch (err: any) {
         // Firebase returns a descriptive error message
         console.error('Firebase login error:', err);
         // Show a friendly message to the user
         setMessage(err.message || 'Login failed. Please try again.');
-      });
+      }
   }
-
   // Navigate to the signup page
   function goToCreateAccount() {
     navigate('/create-account');
