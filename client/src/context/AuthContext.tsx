@@ -1,3 +1,15 @@
+/*
+Adapted from:
+"React + Firebase: A Simple Context-Based Authentication Provider"
+by David Chowitz
+https://dev.to/dchowitz/react-firebase-a-simple-context-based-authentication-provider-1ool?utm_source=chatgpt.com
+
+"Building a React App with Firebase Authentication Using AuthContext"
+by Yogesh Mule
+https://medium.com/%40yogeshmulecraft/building-a-react-app-with-firebase-authentication-using-authcontext-c749886678b2
+*/
+
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '../firebaseConfig';

@@ -1,3 +1,11 @@
+
+/*
+Adapted from:
+"Building a React App with Firebase Authentication Using AuthContext"
+by Yogesh Mule
+https://medium.com/%40yogeshmulecraft/building-a-react-app-with-firebase-authentication-using-authcontext-c749886678b2
+*/
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
