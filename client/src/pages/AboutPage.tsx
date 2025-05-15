@@ -62,11 +62,11 @@ const AboutPage: React.FC = () => {
           </div>
           <div className="dev-card">
             <h3>Masseeh Safi</h3>
-            <p>Filler description</p>
+            <p>Aspiring Software Developer, Oregon State University Student</p>
           </div>
           <div className="dev-card">
             <h3>Tavner Murphy</h3>
-            <p>Filler description.</p>
+            <p>Aspiring Software Developer, Oregon State University Student</p>
           </div>
         </div>
       </section>

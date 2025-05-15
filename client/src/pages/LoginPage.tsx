@@ -30,7 +30,7 @@ function LoginPage() {
         // Grab the Firebase ID token (JWT) for server-side verification if needed
         // const idToken = await user.getIdToken();
         // console.log('ID Token:', idToken);
-        // TODO: store this token (e.g. in localStorage) or attach it to future fetch calls
+        // token no longer needs to be stored here
 
       // Redirect to your pantry page
       navigate('/pantry');

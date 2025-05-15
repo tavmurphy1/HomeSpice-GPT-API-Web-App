@@ -1,4 +1,11 @@
+"""
+FireBase using third-party JWT library sample code taken and used
+Credit Source: https://firebase.google.com/docs/auth/admin/verify-id-tokens#python
 
+HTTPBearer Sample code used and modified 
+Credit Source: https://fastapi.tiangolo.com/reference/security/#fastapi.security.HTTPBearer--usage
+
+"""
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from motor.motor_asyncio import AsyncIOMotorDatabase
@@ -26,9 +33,9 @@ class UserOut(BaseModel):
     id: str = Field(alias="_id")
     email: EmailStr
 
-# -----------------------------
+
 # Helper to format Mongo docs
-# -----------------------------
+
 def format_user(doc) -> dict:
     return {
         "id": str(doc["_id"]),
@@ -36,9 +43,9 @@ def format_user(doc) -> dict:
         "password": doc["password"],
     }
 
-# -----------------------------
+
 # Create account
-# -----------------------------
+
 @router.post(
     "/create-account",
     response_model=UserInDB,
@@ -54,9 +61,9 @@ async def create_account(
     doc = await db.users.find_one({"_id": result.inserted_id})
     return format_user(doc)
 
-# -----------------------------
+
 # Login
-# -----------------------------
+
 @router.post("/login")
 async def login(
     user: UserCreate,
@@ -67,9 +74,9 @@ async def login(
         raise HTTPException(status_code=401, detail="Invalid email or password")
     return {"success": True, "message": "Logged in!"}
 
-# -----------------------------
+
 # List all users (for GET /users/)
-# -----------------------------
+
 @router.get(
     "/users",
     response_model=List[UserOut],
@@ -79,9 +86,8 @@ async def list_users(db: AsyncIOMotorDatabase = Depends(get_db)):
     docs = await db.users.find().to_list(None)
     return [{"_id": str(d["_id"]), "email": d["email"]} for d in docs]
 
-# -----------------------------
 # New: Save Firebase profile
-# -----------------------------
+
 bearer = HTTPBearer()
 
 @router.post(

@@ -1,5 +1,7 @@
 """
 FastAPI router to list all registered users
+Uses Pydantic to define models in our case the database
+
 """
 
 from fastapi import APIRouter, HTTPException, Depends
@@ -14,7 +16,7 @@ from db import get_db
 # now only shows ID not password
 # to properly see if your user is being generated.
 
-# Pydantic output model to be used by datagase
+# Pydantic output model to be used by database
 class UserOut(BaseModel):
     id: str = Field(alias="_id")
     email: EmailStr
