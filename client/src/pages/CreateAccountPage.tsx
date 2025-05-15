@@ -1,3 +1,8 @@
+/*
+Accessing the token along externally using CreateUserWIthEmailandPassword syntax inspired from JS code
+Source Cited: https://firebase.google.com/docs/auth/web/password-auth#web
+*/
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
