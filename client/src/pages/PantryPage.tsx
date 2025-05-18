@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import EditIcon from '../components/icons/EditIcon';
 import TrashIcon from '../components/icons/TrashIcon';
 import '../styles/PantryPage.css';
+import { useAuth } from '../context/AuthContext';   // To authenticate each request
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -12,6 +13,7 @@ type Ingredient = {
 };
 
 export default function PantryPage() {
+  const { token } = useAuth();          // Get ID token for auth
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [newName, setNewName] = useState('');
@@ -21,11 +23,16 @@ export default function PantryPage() {
   const [editQuantity, setEditQuantity] = useState('');
 
   useEffect(() => {
-    fetch(`${API_URL}/ingredients`)
+    // Fetches only current user's pantry using Bearer token from AuthContext
+    fetch(`${API_URL}/ingredients`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    })
       .then(res => res.json())
       .then(setIngredients)
       .catch(err => console.error('Error fetching ingredients:', err));
-  }, []);
+  }, [token]);
 
   const handleAdd = async () => {
     const quantityNum = Number(newQuantity);
@@ -34,7 +41,10 @@ export default function PantryPage() {
     try {
       const res = await fetch(`${API_URL}/ingredients`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,   // Includes token for authUser
+        },
         body: JSON.stringify({ name: newName.trim(), quantity: quantityNum }),
       });
 
@@ -51,7 +61,10 @@ export default function PantryPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`${API_URL}/ingredients/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_URL}/ingredients/${id}`, { 
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },    // Includes token for authUser
+      });
       if (!res.ok) throw new Error('Delete failed');
       setIngredients(ingredients.filter(ing => ing.id !== id));
     } catch (err) {
@@ -78,7 +91,10 @@ export default function PantryPage() {
     try {
       const res = await fetch(`${API_URL}/ingredients/${editingId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,     // Includes token for authUser
+        },
         body: JSON.stringify({ name: editName.trim(), quantity: quantityNum }),
       });
 

@@ -4,6 +4,8 @@ from pydantic import BaseModel, Field
 from bson import ObjectId
 from typing import List
 import os
+from typing import Optional
+from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,6 +28,15 @@ class Ingredient(BaseModel):
         description="Quantity must be greater than 0"
     )
 
+# Model for what lives in the database, tied to owner
+class IngredientInDB(Ingredient):
+    id: Optional[str] = Field(alias="_id")
+    user_id: str = Field(..., description="Owner (Firebase) UID")
+
+    # allows reading of _id via alias and populate from Mongo docs
+    class Config:
+        validate_by_name = True
+        from_attributes = True
 
 # Helper to format MongoDB documents
 def format_ingredient(doc) -> dict:
