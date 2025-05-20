@@ -8,3 +8,6 @@
 __pycache__/
 *.py[cod]__pycache__/
 *.py[cod]
+
+# ignore real App Engine config with secrets
+app.yaml

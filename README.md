@@ -28,7 +28,7 @@
     "python3 -m uvicorn main:app --reload --host 127.0.0.1 --port 8080"
 
 ## Environment Variables
-In order to run the server you need to provide your own `.env`:
+In order to run the server you need to provide your own `.env` and `app.yaml`
 
 1. Copy `server/.env.example` to `server/.env`  
 2. Fill in the `MONGODB_CONNECT_STRING` with your own MongoDB cluster URI
