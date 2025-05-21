@@ -4,3 +4,5 @@ motor==3.7.0
 python-dotenv==1.0.0
 email-validator==2.0
 firebase-admin==6.1.0
+pydantic>=2.0
+certifi>=2023.5.7

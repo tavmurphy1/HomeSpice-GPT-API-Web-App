@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, ConfigDict
 from typing import List, Optional
 from datetime import datetime, timezone
 
@@ -30,19 +30,40 @@ class RecipeCreate(RecipeBase):
     """Payload for creating a new recipe"""
     pass
 
+
 # Internal DB Model
 class RecipeInDB(RecipeBase):
     id: Optional[str] = Field(alias="_id")
-    user_id: Optional[str] = None  # TODO: set when user auth is in place
+    user_id: str = Field(..., description="Owner (Firebase) UID")   # ties to authenticated userIDs
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    class Config:
-        validate_by_name = True
+    model_config = ConfigDict(
+        populate_by_name=True,
+        from_attributes=True,
+    )
+
+
+def format_recipe(doc: dict) -> dict:
+    return {
+        "id": str(doc["_id"]),
+        "title": doc["title"],
+        "description": doc.get("description"),
+        "ingredients": doc["ingredients"],
+        "steps": doc["steps"],
+        "prep_time": doc.get("prep_time"),
+        "cook_time": doc.get("cook_time"),
+        "servings": doc.get("servings"),
+        "image_url": doc.get("image_url"),
+        "created_at": doc.get("created_at"),
+        "updated_at": doc.get("updated_at"),
+    }
 
 # ensures that recipes returned by GPT API will be
 # formatted in JSON and per desired schema
 class RecipeOut(RecipeInDB):
     """Model returned in API responses"""
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        populate_by_name=True,
+        from_attributes=True,
+    )
