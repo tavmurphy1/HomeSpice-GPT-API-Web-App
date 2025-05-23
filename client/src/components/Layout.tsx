@@ -7,8 +7,7 @@ const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     <>
       <Navbar />
         <main>
-          {/* Outlet is a placeholder for child routes */}
-          {children ?? <Outlet />}
+          <Outlet/>
         </main>
     </>
   );

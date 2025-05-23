@@ -26,8 +26,10 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
 
+
 class UserInDB(UserCreate):
     id: Optional[str]
+
 
 class UserOut(BaseModel):
     id: str = Field(alias="_id")
@@ -87,8 +89,8 @@ async def list_users(db: AsyncIOMotorDatabase = Depends(get_db)):
     return [{"_id": str(d["_id"]), "email": d["email"]} for d in docs]
 
 # New: Save Firebase profile
-
 bearer = HTTPBearer()
+
 
 @router.post(
     "/profile",
@@ -109,7 +111,7 @@ async def save_profile(
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid auth token")
 
-    uid   = decoded["uid"]
+    uid = decoded["uid"]
     email = decoded.get("email")
 
     # 2. Upsert by uid

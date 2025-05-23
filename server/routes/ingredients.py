@@ -1,11 +1,12 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List
 from bson import ObjectId
 
 from models.ingredient import Ingredient, IngredientInDB, format_ingredient
 from db import get_db
-from dependencies import get_current_user   # ensures ingredients operations are scoped to users
+# ensures ingredients operations scoped to users
+from dependencies import get_current_user
 
 router = APIRouter(tags=["ingredients"])
 
@@ -107,3 +108,4 @@ async def delete_ingredient(
     if result.deleted_count == 0:
         raise HTTPException(404, detail="Ingredient not found")
     print(f"Deleted ingredient {ingredient_id}")
+    return None

@@ -3,60 +3,52 @@ import { useNavigate } from 'react-router-dom';
 import EditIcon from '../components/icons/EditIcon';
 import TrashIcon from '../components/icons/TrashIcon';
 import { useAuth } from '../context/AuthContext';
+import { getPantry } from '../services/pantryService';
+import { handleGenerateRecipe } from '../services/recipeService';
+import type { Ingredient } from '../types/Ingredient';
+import type { Recipe } from '../types/Recipe';
 import '../styles/RecipesPage.css';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-
-interface Recipe {
-  id: string;
-  title: string;
-  description?: string;
-  ingredients: string[];
-  steps: string[];
-  prep_time: number;
-  cook_time: number;
-  servings: number;
-  image_url: string | null;
-}
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function RecipesPage() {
-  const { token } = useAuth();    // Firebase ID token
+  const { token } = useAuth();
   const navigate = useNavigate();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null);
 
-  // Fetch current user's save recipes
   useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const res = await fetch(`${API_URL}/recipes`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type':  'application/json',
-          },
-        });
-        if (!res.ok) {
-          throw new Error(`Server responded ${res.status}`);
-        }
-        const data: Recipe[] = await res.json();
-        setRecipes(data);
-      } catch (err: any) {
-        setError(err.message || 'Could not load recipes');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchRecipes = async () => {
+    try {
+      const res = await fetch(`${API_URL}/recipes`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!res.ok) throw new Error(`Server responded ${res.status}`);
 
-    fetchRecipes();
+      const data: Recipe[] = await res.json();
+
+      setRecipes(data);
+    } catch (err: any) {
+      console.error("[ERROR] Fetching recipes failed:", err.message);
+      setError(err.message || 'Could not load recipes');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchRecipes();
   }, [token]);
 
   // Navigate to individual recipe page
   const handleView = (id: string) => {
-    navigate(`/recipe/${id}`);
+    navigate(`/recipes/${id}`);
   };
 
-  // Delete recipe on server and remove from local state
+  // Delete a recipe from the backend and remove it from local state
   const handleDelete = async (id: string) => {
     if (!token) return;
     try {
@@ -70,10 +62,30 @@ export default function RecipesPage() {
       setError(err.message || 'Failed to delete recipe');
     }
   };
+  // Generate a new recipe using pantry ingredients
+  const handleGenerate = async () => {
+    if (!token) return;
+    setError(null);
 
-  // Render loading or error states
+    try {
+       // get pantry and filter for ingredients with quantity > 0
+      const pantryCopy: Ingredient[] = await getPantry(token);
+      const usableIngredients = pantryCopy.filter(i => i.quantity > 0);
+
+      if (usableIngredients.length === 0) {
+        setError('Your pantry has no ingredients with quantity greater than 0.');
+        return;
+      }
+      // Get GPT-generated recipe using ingredients + token
+      const newRecipe = await handleGenerateRecipe(token, usableIngredients);
+      setRecipes((prev) => [newRecipe, ...prev]);
+    } catch (err: any) {
+      setError(err.message || 'Failed to generate recipe');
+    }
+  };
+
   if (loading) return <p>Loading recipes…</p>;
-  if (error)   return <p className="error">{error}</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="recipes-page">
@@ -84,23 +96,24 @@ export default function RecipesPage() {
       ) : (
         <div className="recipe-list">
           {recipes.map((r) => (
-            <div key={r.id} className="recipe-card">
-              <span className="recipe-title">{r.title}</span>
-              {r.description && <p className="recipe-desc">{r.description}</p>}
+            <div
+              key={r.id}
+              className="recipe-card clickable-card"
+              onClick={() => handleView(r.id)}
+            >
+              <div className="recipe-card-content">
+                <h2 className="recipe-title">{r.title}</h2>
+                {r.description && <p className="recipe-desc">{r.description}</p>}
+              </div>
 
-              <div className="recipe-actions">
-                <button
-                  onClick={() => handleView(r.id)}
-                  aria-label="View or edit recipe"
-                  className="icon-button"
-                >
+              <div
+                className="recipe-actions"
+                onClick={(e) => e.stopPropagation()} // prevent bubbling to card click
+              >
+                <button onClick={() => handleView(r.id)} className="icon-button">
                   <EditIcon />
                 </button>
-                <button
-                  onClick={() => handleDelete(r.id)}
-                  aria-label="Delete recipe"
-                  className="icon-button"
-                >
+                <button onClick={() => handleDelete(r.id)} className="icon-button">
                   <TrashIcon />
                 </button>
               </div>
@@ -109,13 +122,9 @@ export default function RecipesPage() {
         </div>
       )}
 
-    {/* Generate New Recipe button */}
-    <button
-      className="generate-button"
-      onClick={() => navigate('/recipes/generate')}
-    >
-      Generate New Recipe
-    </button>
+      <button className="generate-button" onClick={handleGenerate}>
+        Generate New Recipe
+      </button>
     </div>
   );
 }
