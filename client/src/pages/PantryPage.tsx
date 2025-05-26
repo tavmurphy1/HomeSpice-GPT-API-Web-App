@@ -1,106 +1,110 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import EditIcon from '../components/icons/EditIcon';
 import TrashIcon from '../components/icons/TrashIcon';
 import '../styles/PantryPage.css';
-import { useAuth } from '../context/AuthContext';   // To authenticate each request
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-
-type Ingredient = {
-  id: string;
-  name: string;
-  quantity: number;
-};
+import { useAuth } from '../context/AuthContext';
+import { getPantry, addIngredient, updateIngredient, deleteIngredient } from '../services/pantryService';
+import { Ingredient } from '../types/Ingredient';
 
 export default function PantryPage() {
-  const { token } = useAuth();          // Get ID token for auth
+  const { token, loading } = useAuth();
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [newName, setNewName] = useState('');
   const [newQuantity, setNewQuantity] = useState('');
+  const [newUnit, setNewUnit] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editQuantity, setEditQuantity] = useState('');
+  const [editUnit, setEditUnit] = useState('');
 
   useEffect(() => {
-    // Fetches only current user's pantry using Bearer token from AuthContext
-    fetch(`${API_URL}/ingredients`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    })
-      .then(res => res.json())
-      .then(setIngredients)
-      .catch(err => console.error('Error fetching ingredients:', err));
-  }, [token]);
+    if (loading || !token) return;
 
+    const fetchIngredients = async () => {
+      try {
+        const data = await getPantry(token);
+        setIngredients(data);
+      } catch (err) {
+        console.error('Error fetching ingredients:', err);
+      }
+    };
+    fetchIngredients();
+  }, [token, loading]);
+
+  // Add a new ingredient
   const handleAdd = async () => {
+    // handle no token
+    if (!token) {
+      console.error("No token provided.");
+      return;
+    }
+
     const quantityNum = Number(newQuantity);
-    if (!newName.trim() || isNaN(quantityNum) || quantityNum <= 0) return;
+    if (!newName.trim() || !newUnit.trim() || isNaN(quantityNum) || quantityNum <= 0) return;
 
     try {
-      const res = await fetch(`${API_URL}/ingredients`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,   // Includes token for authUser
-        },
-        body: JSON.stringify({ name: newName.trim(), quantity: quantityNum }),
+      const created = await addIngredient(token, { 
+        name: newName.trim(),
+        quantity: quantityNum,
+        unit: newUnit.trim()
       });
-
-      if (!res.ok) throw new Error('Failed to add ingredient');
-      const created: Ingredient = await res.json();
       setIngredients([...ingredients, created]);
       setNewName('');
       setNewQuantity('');
+      setNewUnit('');
       setIsAdding(false);
     } catch (err) {
       console.error(err);
     }
   };
 
+  // Remove an ingredient by ID
   const handleDelete = async (id: string) => {
+    // handle no token
+    if (!token) {
+      console.error("No token provided.");
+      return;
+    }
     try {
-      const res = await fetch(`${API_URL}/ingredients/${id}`, { 
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` },    // Includes token for authUser
-      });
-      if (!res.ok) throw new Error('Delete failed');
+      await deleteIngredient(token, id);
       setIngredients(ingredients.filter(ing => ing.id !== id));
     } catch (err) {
       console.error(err);
     }
   };
 
+  // Start editing an ingredient
   const startEdit = (ingredient: Ingredient) => {
     setEditingId(ingredient.id);
     setEditName(ingredient.name);
     setEditQuantity(ingredient.quantity.toString());
+    setEditUnit(ingredient.unit);
   };
 
+  // Cancel editing mode
   const cancelEdit = () => {
     setEditingId(null);
     setEditName('');
     setEditQuantity('');
+    setEditUnit('');
   };
-
+  // save updated ingredient
   const handleSaveEdit = async () => {
+    //handle no token
+    if (!token) {
+      console.error("No token provided.");
+      return;
+    }
     const quantityNum = Number(editQuantity);
-    if (!editName.trim() || isNaN(quantityNum) || quantityNum <= 0 || !editingId) return;
+    if (!editName.trim() || !editUnit.trim() || isNaN(quantityNum) || quantityNum <= 0 || !editingId) return;
 
     try {
-      const res = await fetch(`${API_URL}/ingredients/${editingId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,     // Includes token for authUser
-        },
-        body: JSON.stringify({ name: editName.trim(), quantity: quantityNum }),
+      const updated = await updateIngredient(token, editingId, {
+        name: editName.trim(),
+        quantity: quantityNum,
+        unit: editUnit.trim()
       });
-
-      if (!res.ok) throw new Error('Edit failed');
-      const updated: Ingredient = await res.json();
-
       setIngredients(ingredients.map(i => i.id === updated.id ? updated : i));
       cancelEdit();
     } catch (err) {
@@ -117,32 +121,44 @@ export default function PantryPage() {
             {editingId === item.id ? (
               <>
                 <input
-                  className="edit-input"
                   value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
+                  onChange={e => setEditName(e.target.value)}
+                  className="edit-input"
                 />
                 <input
-                  className="edit-input"
+                  value={editQuantity}
                   type="number"
                   min="0.01"
                   step="0.01"
-                  value={editQuantity}
-                  onChange={(e) => setEditQuantity(e.target.value)}
+                  onChange={e => setEditQuantity(e.target.value)}
+                  className="edit-input"
                 />
+                <select
+                  value={editUnit}
+                  onChange={e => setEditUnit(e.target.value)}
+                  className="edit-input"
+                >
+                  <option value="">Select unit</option>
+                  <option value="g">grams</option>
+                  <option value="kg">kilograms</option>
+                  <option value="ml">milliliters</option>
+                  <option value="l">liters</option>
+                  <option value="tsp">teaspoons</option>
+                  <option value="tbsp">tablespoons</option>
+                  <option value="cups">cups</option>
+                  <option value="oz">ounces</option>
+                  <option value="pieces">whole (e.g. eggs, tomatoes)</option>
+                </select>
                 <button onClick={handleSaveEdit}>Save</button>
                 <button onClick={cancelEdit}>Cancel</button>
               </>
             ) : (
               <>
                 <span className="pantry-item-label">
-                  {item.quantity} × {item.name}
+                  {item.quantity} {item.unit} × {item.name}
                 </span>
-                <button onClick={() => startEdit(item)}>
-                  <EditIcon />
-                </button>
-                <button onClick={() => handleDelete(item.id)}>
-                  <TrashIcon />
-                </button>
+                <button onClick={() => startEdit(item)}><EditIcon /></button>
+                <button onClick={() => handleDelete(item.id)}><TrashIcon /></button>
               </>
             )}
           </div>
@@ -157,7 +173,6 @@ export default function PantryPage() {
         <div className="modal">
           <div className="modal-content">
             <input
-              type="text"
               placeholder="Name (e.g. Flour)"
               value={newName}
               onChange={e => setNewName(e.target.value)}
@@ -170,7 +185,23 @@ export default function PantryPage() {
               step="0.01"
               onChange={e => setNewQuantity(e.target.value)}
             />
-            <button onClick={handleAdd}>Save</button>
+            <select
+              value={newUnit}
+              onChange={e => setNewUnit(e.target.value)}
+              className="edit-input"
+            >
+              <option value="">Select unit</option>
+              <option value="g">grams</option>
+              <option value="kg">kilograms</option>
+              <option value="ml">milliliters</option>
+              <option value="l">liters</option>
+              <option value="tsp">teaspoons</option>
+              <option value="tbsp">tablespoons</option>
+              <option value="cups">cups</option>
+              <option value="oz">ounces</option>
+              <option value="pieces">whole (e.g. eggs, tomatoes)</option>
+            </select>
+            <button onClick={handleAdd} disabled={!newName || !newUnit || !newQuantity}>Save</button>
             <button onClick={() => setIsAdding(false)}>Cancel</button>
           </div>
         </div>

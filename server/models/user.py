@@ -10,6 +10,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
 
+
 class UserInDB(BaseModel):
     id: Optional[str] = Field(alias="_id")
     email: EmailStr

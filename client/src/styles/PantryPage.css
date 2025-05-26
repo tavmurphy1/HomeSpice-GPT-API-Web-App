@@ -1,3 +1,4 @@
+/* Import elegant serif + modern sans‑serif */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap');
 
 :root {
@@ -123,15 +124,18 @@ html, body {
 
 .modal-content {
   background: var(--bg-card);
-  padding: 24px 32px;
-  border-radius: 6px;
+  padding: 32px 40px;
+  border-radius: 8px;
   box-shadow: 0 4px 12px var(--shadow);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  width: 100%;
+  max-width: 420px;
 }
 
-.modal-content input {
+.modal-content input,
+.modal-content select {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid #ccc;
@@ -143,7 +147,8 @@ html, body {
   transition: border-color 0.2s;
 }
 
-.modal-content input:focus {
+.modal-content input:focus,
+.modal-content select:focus {
   outline: none;
   border-color: var(--accent);
 }

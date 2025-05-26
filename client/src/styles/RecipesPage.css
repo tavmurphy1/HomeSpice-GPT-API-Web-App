@@ -1,3 +1,4 @@
+/* Import elegant serif + modern sans‑serif */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap');
 
 :root {
@@ -91,6 +92,15 @@ html, body {
   gap: 12px;
   margin-top: 8px;
 }
+.clickable-card {
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.clickable-card:hover {
+  background-color: #f7f1e6;
+  transform: translateY(-2px);
+}
 
 /* Icon buttons matching pantry style */
 .icon-button {
@@ -117,7 +127,6 @@ html, body {
   display: block;
 }
 
-/* If you have a “Generate New” button below the list */
 .generate-button {
   width: 100%;
   padding: 12px;

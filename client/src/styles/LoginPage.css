@@ -3,11 +3,11 @@
 
 :root {
 
-  --bg-page:    #fdf8f0;   /* light parchment */
-  --bg-card:    #ffffff;   /* crisp white */
-  --text-main:  #333333;   /* deep charcoal */
-  --accent:     #b94e48;   /* rich cranberry */
-  --muted:      #7a7a7a;   /* soft gray */
+  --bg-page:    #fdf8f0;
+  --bg-card:    #ffffff;
+  --text-main:  #333333;
+  --accent:     #b94e48;
+  --muted:      #7a7a7a;
   --shadow:     rgba(0,0,0,0.1);
   
   --font-heading: 'Playfair Display', serif;

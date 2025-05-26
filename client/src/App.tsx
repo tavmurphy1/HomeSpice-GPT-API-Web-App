@@ -37,7 +37,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
             <Route path="/recipes" element={<RecipesPage />} />
-            <Route path="/recipe/:recipeId" element={<RecipeIndividualPage />} />
+            <Route path="/recipes/:recipeId" element={<RecipeIndividualPage />} />
             <Route path="/pantry" element={<PantryPage />} /> 
           </Route>
         </Route>

@@ -8,7 +8,8 @@ load_dotenv()
 MONGO_URI = os.getenv("MONGODB_CONNECT_STRING")
 DB_NAME = os.getenv("MONGO_DB_NAME", "homespice")
 
-client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI, tlsCAFile=certifi.where())
+client: AsyncIOMotorClient = AsyncIOMotorClient(MONGO_URI, tlsCAFile=certifi.
+                                                where())
 db: AsyncIOMotorDatabase = client[DB_NAME]
 
 
