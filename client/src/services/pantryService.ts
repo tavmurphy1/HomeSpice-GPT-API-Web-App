@@ -21,11 +21,10 @@ export async function getPantry(token: string): Promise<Ingredient[]> {
   }
 
   const raw = await response.json();
-
-  // map _id to id if needed
   return raw.map((item: any) => ({
     ...item,
-    id: item.id ?? item._id,
+    // going from _id to id to add unique id to ingredients
+    id: item.id ?? item._id,   
   }));
 }
 /**
@@ -34,7 +33,10 @@ export async function getPantry(token: string): Promise<Ingredient[]> {
  * @param ingredient Ingredient data (without ID)
  * @returns The newly created ingredient
  */
-export async function addIngredient(token: string, ingredient: IngredientBase): Promise<Ingredient> {
+export async function addIngredient(
+  token: string,
+  ingredient: IngredientBase
+): Promise<Ingredient> {
   const res = await fetch(`${API_URL}/ingredients`, {
     method: 'POST',
     headers: {
@@ -44,10 +46,17 @@ export async function addIngredient(token: string, ingredient: IngredientBase): 
     body: JSON.stringify(ingredient),
   });
 
-  if (!res.ok) throw new Error(`Failed to add ingredient (${res.status})`);
-  return await res.json();
-}
+  if (!res.ok) {
+    throw new Error(`Failed to add ingredient (${res.status})`);
+  }
 
+  const data = await res.json();
+  return {
+    ...data,
+    //SWITCH _ID TO ID to for unique key issue
+    id: data.id ?? data._id,  
+  };
+}
 /**
  * Updates an existing ingredient by ID.
  * @param token Auth token
@@ -55,7 +64,11 @@ export async function addIngredient(token: string, ingredient: IngredientBase): 
  * @param ingredient Updated ingredient data (without ID)
  * @returns The updated ingredient
  */
-export async function updateIngredient(token: string, id: string, ingredient: IngredientBase): Promise<Ingredient> {
+export async function updateIngredient(
+  token: string,
+  id: string,
+  ingredient: IngredientBase
+): Promise<Ingredient> {
   const res = await fetch(`${API_URL}/ingredients/${id}`, {
     method: 'PUT',
     headers: {
@@ -65,8 +78,16 @@ export async function updateIngredient(token: string, id: string, ingredient: In
     body: JSON.stringify(ingredient),
   });
 
-  if (!res.ok) throw new Error(`Failed to update ingredient (${res.status})`);
-  return await res.json();
+  if (!res.ok) {
+    throw new Error(`Failed to update ingredient (${res.status})`);
+  }
+
+  const data = await res.json();
+  return {
+    ...data,
+    // _id to id for key ingredients
+    id: data.id ?? data._id,  
+  };
 }
 
 
@@ -75,7 +96,10 @@ export async function updateIngredient(token: string, id: string, ingredient: In
  * @param token Auth token
  * @param id Ingredient ID
  */
-export async function deleteIngredient(token: string, id: string): Promise<void> {
+export async function deleteIngredient(
+  token: string,
+  id: string
+): Promise<void> {
   const res = await fetch(`${API_URL}/ingredients/${id}`, {
     method: 'DELETE',
     headers: {
@@ -83,5 +107,7 @@ export async function deleteIngredient(token: string, id: string): Promise<void>
     },
   });
 
-  if (!res.ok) throw new Error(`Failed to delete ingredient (${res.status})`);
+  if (!res.ok) {
+    throw new Error(`Failed to delete ingredient (${res.status})`);
+  }
 }
