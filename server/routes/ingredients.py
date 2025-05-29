@@ -24,6 +24,7 @@ async def create_ingredient(
     result = await db.ingredients.insert_one(new_doc)
     created = await db.ingredients.find_one({"_id": result.inserted_id})
     print(f"Created ingredient with ID: {result.inserted_id}")
+    created["id"] = str(created["_id"])
     return format_ingredient(created)
 
 
