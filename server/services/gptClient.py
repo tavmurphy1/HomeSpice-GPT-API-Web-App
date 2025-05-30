@@ -20,7 +20,12 @@ GPT_RECIPE_PROMPT_TEMPLATE = (
     "- cook_time (int)\n"
     "- servings (int)\n"
     "- image_url (str or null)\n\n"
-    "Use only ingredients from the following list: {}"
+    "You will be provided a list of available ingredients. Choose a recipe"
+    "that uses a reasonable subset of them. Be mindful of portions - do not"
+    "use all of each ingredient unless appropriate for a recipe that serves"
+    "2-6 people. Make sure to include the number of servings in the JSON"
+    "response using the 'servings' field..\n"
+    "Available Ingredients: {}"
 )
 
 # Helper to process GPT ingredient strings into
@@ -50,6 +55,7 @@ def parse_ingredient_string(s: str) -> dict:
         name = " ".join(tokens).title()
 
     return {"name": name, "quantity": quantity, "unit": unit}
+
 
 # Main GPT-to-recipe generator
 async def generate_recipe_from_ingredients(ingredients: list[str]) -> dict:

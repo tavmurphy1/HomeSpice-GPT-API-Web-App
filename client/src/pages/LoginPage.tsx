@@ -57,7 +57,7 @@ function LoginPage() {
       <div className="login-box">
         <h1 className="login-title">
           Welcome to <br />
-          HomeSlice!
+          HomeSpice!
         </h1>
         <p className="login-tagline">
           Discover new recipes.
