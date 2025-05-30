@@ -22,16 +22,9 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/create-account" element={<CreateAccountPage />} />
-        <Route
-          path="/about"
-          element={user ? (
-            <Layout>
-              <AboutPage />
-            </Layout>
-          ) : (
-              <AboutPage />
-          )} 
-        />
+        <Route element={<Layout />}>
+          <Route path="/about" element={<AboutPage />} />
+        </Route>
 
         {/* Protected Items - Required auth - Include Navbar */}
         <Route element={<ProtectedRoute />}>

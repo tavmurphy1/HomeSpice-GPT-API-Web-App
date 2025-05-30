@@ -42,6 +42,10 @@ export default function RecipeIndividualPage() {
       <h1>{recipe.title}</h1>
       {recipe.description && <p>{recipe.description}</p>}
 
+      {recipe.servings && (
+      <p><strong>Servings:</strong> {recipe.servings}</p>
+      )}
+
       <h3>Ingredients:</h3>
       <ul>
         {recipe.ingredients.map((ing, idx) => (

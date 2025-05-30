@@ -1,35 +1,41 @@
-# GPT-API-Challenge
+# HomeSpice: Smart Recipe Generator
+# GPT API Challenge
 
 ## Prerequisites
 
-- Docker Desktop** (includes `docker compose`)  
-- Node.js (>=14) & npm
-- Python 3.8+ & pip
+Before you begin, make sure you have:
 
-
-## Client aka React + Vite Front-End Development Server
-
-1. Navigate to client directory
-
-2. "npm run dev" in console
-
-3. Enter "http://localhost:5173/" in browser
-
-## ## Server aka FastAPI + Motor Back-End Development Server
-1. Install Dependencies
-    "cd server"
-    "python3 -m pip install --upgrade pip"
-    "python3 -m pip install --user -r requirements.txt"
-
-2. Start local MongoDB via Docker
-    "docker compose up -d mongo"
-
-3. Run API server
-    "python3 -m uvicorn main:app --reload --host 127.0.0.1 --port 8080"
+- Python 3.8+ and `pip`
+- Node.js (v16 or newer) and `npm`
+- A MongoDB Atlas cluster (or Mongo URI)
+- An OpenAI API key
+- A Firebase project with Email/Password Authentication enabled
 
 ## Environment Variables
-In order to run the server you need to provide your own `.env` and `app.yaml`
 
-1. Copy `server/.env.example` to `server/.env`  
-2. Fill in the `MONGODB_CONNECT_STRING` with your own MongoDB cluster URI
-3. Add MONGO_DB_NAME=homespice to 'server/.env'
+This project uses two `.env` files:
+
+### `client/.env`
+Used by Vite to inject environment variables into the frontend at build time. Must contain only variables prefixed with `VITE_`.
+
+Reference: `client/.env.example`
+
+### `server/.env`
+Used by the FastAPI backend, loaded via `python-dotenv` and `load_dotenv()` in `gptClient.py`.
+
+Reference: `server/.env.example`
+
+## Run the app using the startup script:
+./startup.sh
+
+This will:
+- Install frontend dependencies with npm install
+- Install backend dependencies using requirements.txt
+- Start both the Vite frontend and FastAPI backend servers
+
+Access the app at:
+- Frontend: http://localhost:5173
+- Backend/API Docs: http://localhost:8080/docs
+
+## Stop the app using the shutdown scrip:
+./shutdown.sh
