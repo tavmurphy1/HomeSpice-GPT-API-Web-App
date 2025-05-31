@@ -48,15 +48,24 @@ async def list_recipes(
     db: AsyncIOMotorDatabase = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    docs = await db.recipes.find({"user_id": current_user["uid"]}).to_list(length=None)
+    try:
+        docs = await db.recipes.find({"user_id": current_user["uid"]}).to_list(length=None)
 
-    for doc in docs:
-        doc["_id"] = str(doc["_id"])
-        for ing in doc.get("ingredients", []):
-            ing["quantity"] = float(ing["quantity"])
+        for doc in docs:
+            doc["_id"] = str(doc["_id"])
+            
+            # addresses error in Cloud Run when user has empty recipe list
+            if doc.get("image_url") in [None, "None", "null"]:
+                doc["image_url"] = None
 
-    return [RecipeOut.from_mongo(doc).model_dump(by_alias=True, mode="json") for doc in docs]
+            for ing in doc.get("ingredients", []):
+                ing["quantity"] = float(ing["quantity"])
 
+        return [RecipeOut.from_mongo(doc).model_dump(by_alias=True, mode="json") for doc in docs]
+
+    except Exception as e:
+        print("Error in list_recipes:", e)
+        raise HTTPException(status_code=500, detail="Failed to fetch recipes")
 
 @router.get("/{recipe_id}", response_model=RecipeOut)
 async def get_recipe(

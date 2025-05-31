@@ -17,8 +17,9 @@ app = FastAPI(title="HomeSpice API")
 # CORS config
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173",
-                   "http://localhost:5185"],
+#    allow_origins=["http://localhost:5173",   commented out for deployment
+#                   "http://localhost:5185"],  commented out for deployment     
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

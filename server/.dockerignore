@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+.env
+.env.*  # just in case you have .env.local or others
+.vscode/
+*.log
+.DS_Store
+
+# Node-related (if somehow copied in)
+node_modules/
+
+# Git metadata
+.git/
+.gitignore

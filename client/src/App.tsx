@@ -12,7 +12,7 @@ import { useAuth } from './context/AuthContext';
 
 function App() {
   // Get the user from the AuthContext
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   if (loading) return <div>Loading...</div>;
 
   return (

@@ -1,7 +1,7 @@
 import type { Ingredient, IngredientBase } from '../types/Ingredient';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-
+const API_URL = import.meta.env.VITE_API_URL; // || 'http://localhost:8080'; (commented out for deployment)
+console.log("[pantryService] API_URL =", API_URL);
 
 /**
  * Fetches all pantry ingredients for the current user.
@@ -9,7 +9,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
  * @returns Array of ingredients
  */
 export async function getPantry(token: string): Promise<Ingredient[]> {
-  const response = await fetch(`${API_URL}/ingredients`, {
+  const response = await fetch(`${API_URL}/ingredients/`, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export async function addIngredient(
   token: string,
   ingredient: IngredientBase
 ): Promise<Ingredient> {
-  const res = await fetch(`${API_URL}/ingredients`, {
+  const res = await fetch(`${API_URL}/ingredients/`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
