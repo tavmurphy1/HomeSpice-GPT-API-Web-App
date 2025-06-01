@@ -10,16 +10,23 @@ const API_URL = import.meta.env.VITE_API_URL;
 export async function handleGenerateRecipe(token: string, ingredients: Ingredient[]): Promise<Recipe> {
   const payload = ingredients.map(({ name, quantity, unit }) => ({ name, quantity, unit }));
 
+  // adding debug console statements
+  const body = { ingredients: payload };
+  console.log("Sending to /recipes/generate:", JSON.stringify(body, null, 2));
+
   const response = await fetch(`${API_URL}/recipes/generate`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ ingredients: payload }),
+    body: JSON.stringify(body),
   });
 
+  // changing response to give out specific problem with generation of recipes
   if (!response.ok) {
+    const text = await response.text();
+    console.error("Generate recipe failed:", response.status, text);
     throw new Error(`Failed to generate recipe (${response.status})`);
   }
 

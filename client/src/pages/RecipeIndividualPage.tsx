@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Recipe } from '../types/Recipe';
@@ -41,6 +41,10 @@ export default function RecipeIndividualPage() {
     <div className="recipe-individual-page">
       <h1>{recipe.title}</h1>
       {recipe.description && <p>{recipe.description}</p>}
+
+      {recipe.servings && (
+      <p><strong>Servings:</strong> {recipe.servings}</p>
+      )}
 
       <h3>Ingredients:</h3>
       <ul>

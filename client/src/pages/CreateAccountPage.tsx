@@ -9,7 +9,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth }                          from '../firebaseConfig';
 import '../styles/CreateAccountPage.css';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8080';
+const API_BASE = import.meta.env.VITE_API_URL; // || 'http://localhost:8080'; (commented out for deployment)
 
 function CreateAccountPage() {
   const [email, setEmail]                   = useState('');

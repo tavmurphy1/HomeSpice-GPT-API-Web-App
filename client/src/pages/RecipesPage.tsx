@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EditIcon from '../components/icons/EditIcon';
 import TrashIcon from '../components/icons/TrashIcon';
@@ -9,7 +9,8 @@ import type { Ingredient } from '../types/Ingredient';
 import type { Recipe } from '../types/Recipe';
 import '../styles/RecipesPage.css';
 
-const API_URL = import.meta.env.VITE_API_URL;
+// listen to port 8080
+const API_URL = import.meta.env.VITE_API_URL; // ?? 'http://localhost:8080'; (commented out for deployment)
 
 export default function RecipesPage() {
   const { token } = useAuth();
@@ -21,7 +22,7 @@ export default function RecipesPage() {
   useEffect(() => {
   const fetchRecipes = async () => {
     try {
-      const res = await fetch(`${API_URL}/recipes`, {
+      const res = await fetch(`${API_URL}/recipes/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

@@ -12,7 +12,7 @@ import { useAuth } from './context/AuthContext';
 
 function App() {
   // Get the user from the AuthContext
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -22,16 +22,9 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/create-account" element={<CreateAccountPage />} />
-        <Route
-          path="/about"
-          element={user ? (
-            <Layout>
-              <AboutPage />
-            </Layout>
-          ) : (
-              <AboutPage />
-          )} 
-        />
+        <Route element={<Layout />}>
+          <Route path="/about" element={<AboutPage />} />
+        </Route>
 
         {/* Protected Items - Required auth - Include Navbar */}
         <Route element={<ProtectedRoute />}>
