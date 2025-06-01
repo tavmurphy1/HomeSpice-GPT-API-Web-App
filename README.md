@@ -1,7 +1,15 @@
 # HomeSpice: Smart Recipe Generator
 # GPT API Challenge
+------------------------------
+## Live Deployment
 
-## Prerequisites
+- **Frontend (UI) (Firebase Hosting)**: https://homespice-ae7aa.web.app
+- **Backend (Google Cloud Run)**: https://homespice-api-262419158229.us-central1.run.app
+
+------------------------------
+## Run Locally (Developer Environment)
+
+### Prerequisites
 
 Before you begin, make sure you have:
 
@@ -11,16 +19,16 @@ Before you begin, make sure you have:
 - An OpenAI API key
 - A Firebase project with Email/Password Authentication enabled
 
-## Environment Variables
+### Environment Variables
 
 This project uses two `.env` files:
 
-### `client/.env`
+#### `client/.env`
 Used by Vite to inject environment variables into the frontend at build time. Must contain only variables prefixed with `VITE_`.
 
 Reference: `client/.env.example`
 
-### `server/.env`
+#### `server/.env`
 Used by the FastAPI backend, loaded via `python-dotenv` and `load_dotenv()` in `gptClient.py`.
 
 Reference: `server/.env.example`
@@ -35,7 +43,7 @@ This will:
 
 Access the app at:
 - Frontend: http://localhost:5173
-- Backend/API Docs: http://localhost:8080/docs
+- Backend(API) Docs: http://localhost:8080/docs
 
 ## Stop the app using the shutdown scrip:
 ./shutdown.sh
