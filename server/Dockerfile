@@ -26,7 +26,7 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Copy Firebase key (must match filename used in firebase_init.py)
-COPY homespice-ae7aa-firebase-adminsdk-fbsvc-883433c0ea.json .
+COPY homespice-ae7aa-44106519bcde.json .
 
 # Expose port 8080 for Cloud Run
 EXPOSE 8080
